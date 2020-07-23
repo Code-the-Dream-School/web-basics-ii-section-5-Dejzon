@@ -10,10 +10,10 @@
 //As our previous Battleship, the winner is the player that hits the 4 opponent's ships first
 //one more Thing create a 'reset' and a 'new game' buttons as childs of the element with the id 'buttons'. the reset button has to start the game again and the new game create a new game with new players and a new random board.
 
-let message = document.getElementById('message').textContent;
 
 
 let shipNumber = 4; //declare number of battlesip on field, so later if there is need to change that number just do it on this line
+
 const player_1 = {
   name: 'Mido', //create players
   shipCount: 0,
@@ -51,29 +51,32 @@ generateBattlefield = (player) => {
     player.shipCount++; //shipCount increased by 1
   }
 };
+let currentPlayer = player_1;
+let otherPlayer = player_2;
+// coinFlip = () => { //decide who is going to play first
+//   if (Math.random() < 0.50) {
+//     currentPlayer = player_1;
+//     otherPlayer = player_2;
+//   } else {
+//     currentPlayer = player_2;
+//     otherPlayer = player_1;
+//   }
+// }
 
-coinFlip = () => { //decide who is going to play first
-  if (Math.random() < 0.50) {
-    currentPlayer = player_1;
-    otherPlayer = player_2;
-  } else {
-    currentPlayer = player_2;
-    otherPlayer = player_1;
-  }
-}
-
-coinFlip();
+// coinFlip();
 
 switchPlayers = () => { //switch players
-  
-  console.log("I'm running: switchPlayers")
+  console.log('I am working: switchPlayers')
   if (currentPlayer === player_1) {
     currentPlayer = player_2;
     otherPlayer = player_1;
+    opponentBoard = arrayOppenentBoards[0]
   } else {
     currentPlayer = player_1;
     otherPlayer = player_2
+    opponentBoard = arrayOppenentBoards[1]
   }
+
 }
 
 
@@ -81,7 +84,7 @@ switchPlayers = () => { //switch players
 
 const board_Player1 = document.getElementById("board_player1");
 const board_Player2 = document.getElementById("board_player2");
-
+let opponentBoard = board_Player2 // Starts the game by setting the target board
 generateBattlefield(player_1); //generate fields for players
 generateBattlefield(player_2);
 
@@ -103,30 +106,29 @@ createBatlleField = () => {
 
         //this function adds the click event to each cell
         cell.addEventListener("click", (e) => {
-          console.log(e.target.parentNode.parentNode);
-          console.log(arrayOppenentBoards[i])
-          if(e.target.parentNode.parentNode.id == arrayOppenentBoards[i].id) {
+          console.log(currentPlayer.name)
+          // checks if the board we are hitting is us or the other player...
+          if(e.target.parentNode.parentNode.id == opponentBoard.id) {
             let cell = e.target; // get the element clicked
-          console.log("cell.textContent:", cell.textContent); //display the coordinates in the console
+            console.log("cell.textContent:", cell.textContent); //display the coordinates in the console
 
-          let xCoord = parseInt(cell.textContent.slice(0, 1));
-          let yCoord = parseInt(cell.textContent.slice(2, 3));
-          console.log("x coord: " + xCoord);
-          console.log("y coord: " + yCoord);
+            let xCoord = parseInt(cell.textContent.slice(0, 1));
+            let yCoord = parseInt(cell.textContent.slice(2, 3));
+            console.log("x coord: " + xCoord);
+            console.log("y coord: " + yCoord);
 
 
-          if (arrayOpponents[i].gameBoard[xCoord][yCoord] === 1) { //check is there a ship on those coord; if hit:
-            arrayOpponents[i].shipCount--; //reduce number of ships
-            cell.style.background = "purple";
-            // switchPlayers();
-          } else {
-            message = `Miss, better luck next time!`
-            cell.style.background = "lightgreen";
-            // switchPlayers();
-          }
+            if (arrayOpponents[i].gameBoard[xCoord][yCoord] === 1) { //check is there a ship on those coord; if hit:
+              arrayOpponents[i].shipCount--; //reduce number of ships
+              cell.style.background = "purple";
+              // switchPlayers();
+            } else {
+              message = `Miss, better luck next time!`
+              cell.style.background = "lightgreen";
+              // switchPlayers();
+            }
 
-          switchPlayers()
-          
+            switchPlayers()
           }
 
           // cell.style.visibility = 'hidden';// this  means that the contents of the element will be invisible, but the element stays in its original position and size / try it clicking on any of the black cells (in your browser) and see whats happens

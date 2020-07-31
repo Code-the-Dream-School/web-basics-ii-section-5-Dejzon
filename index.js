@@ -10,34 +10,26 @@
 //As our previous Battleship, the winner is the player that hits the 4 opponent's ships first
 //one more Thing create a 'reset' and a 'new game' buttons as childs of the element with the id 'buttons'. the reset button has to start the game again and the new game create a new game with new players and a new random board.
 
-
-
-let shipNumber = 4; //declare number of battlesip on field, so later if there is need to change that number just do it on this line
-
 const player_1 = {
-  name: 'Mido', //create players
+  name:'Mido', //prompt(`Enter player 1 name:`), create players
   shipCount: 0,
-  gameBoard: [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
+  gameBoard: []
 };
 
 const player_2 = {
-  name: 'Skela',
+  name:'Skela',//prompt(`Enter player 2 name:`),
   shipCount: 0,
-  gameBoard: [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
+  gameBoard: []
 };
 
 generateBattlefield = (player) => {
-  while (player.shipCount < shipNumber) {
+  player.gameBoard = [
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ];
+  while (player.shipCount < 4) {
     //shipCount will start from 0 and will increase until reach shipNumber value
     let x = Math.floor(Math.random() * 4);
     let y = Math.floor(Math.random() * 4);
@@ -50,218 +42,139 @@ generateBattlefield = (player) => {
     player.gameBoard[x][y] = 1; //place ship on specific coord.
     player.shipCount++; //shipCount increased by 1
   }
+  console.log(player.name, player.gameBoard)
 };
-let currentPlayer = player_1;
-let otherPlayer = player_2;
-// coinFlip = () => { //decide who is going to play first
-//   if (Math.random() < 0.50) {
-//     currentPlayer = player_1;
-//     otherPlayer = player_2;
-//   } else {
-//     currentPlayer = player_2;
-//     otherPlayer = player_1;
-//   }
-// }
 
-// coinFlip();
+const boardPlayer_1 = document.getElementById("board_player1");
+const boardPlayer_2 = document.getElementById("board_player2");
+const turnPlayer = document.getElementById("turn_player");
+const namePlayer_1 = document.getElementById("name_player1");
+const namePlayer_2 = document.getElementById("name_player2");
+const shipsPlayer_1 = document.getElementById("ships_player1");
+const shipsPlayer_2 = document.getElementById("ships_player2");
+const button = document.getElementById("buttons");
 
-switchPlayers = () => { //switch players
-  console.log('I am working: switchPlayers')
-  if (currentPlayer === player_1) {
-    currentPlayer = player_2;
-    otherPlayer = player_1;
-    opponentBoard = arrayOppenentBoards[0]
+namePlayer_1.textContent = player_1.name;
+namePlayer_2.textContent = player_2.name;
+turnPlayer.textContent; // current player name
+
+let activeBoard; // Represent which player making fire
+
+coinFlip = () => {
+  //decide who is going to play first
+  if (Math.random() < 0.5) {
+    turnPlayer.textContent = player_2.name;
+    activeBoard = "board_player1";
   } else {
-    currentPlayer = player_1;
-    otherPlayer = player_2
-    opponentBoard = arrayOppenentBoards[1]
+    turnPlayer.textContent = player_1.name;
+    activeBoard = "board_player2";
   }
+};
 
+coinFlip();
+
+switchPlayers = () => {
+  //function switch active player
+  if (activeBoard === "board_player1") {
+    activeBoard = "board_player2";
+    turnPlayer.textContent = player_1.name;
+  } else if (activeBoard === "board_player2") {
+    activeBoard = "board_player1";
+    turnPlayer.textContent = player_2.name;
+  }
 }
 
+// final msg function
 
+finalMessage = (player) => {
+  activeBoard = "";
+  turnPlayer.textContent = `Congratulations ${player.name}!!!`;
+}
 
-
-const board_Player1 = document.getElementById("board_player1");
-const board_Player2 = document.getElementById("board_player2");
-let opponentBoard = board_Player2 // Starts the game by setting the target board
-generateBattlefield(player_1); //generate fields for players
-generateBattlefield(player_2);
-
-const arrayPlayerBoards = [board_Player1, board_Player2];
-const arrayOppenentBoards = [board_Player2, board_Player1];
-const arrayOpponents = [player_2, player_1];
-
-
-
-createBatlleField = () => {
-  for (let i = 0; i < arrayPlayerBoards.length; i++) {
-    for (var x = 0; x < 4; x++) {
-      const li = document.createElement("li"); // creating childs for the list (board), in this case represent a row number 'x' of the board
-      for (var y = 0; y < 4; y++) {
-        const cell = document.createElement("div");
-        cell.className = "square"; // adding css properties to make it looks like a square
-        cell.textContent = `${x},${y}`; // saves the coordinates as a string value 'x,y'
-        cell.value = 0; //state of the cell
-
-        //this function adds the click event to each cell
-        cell.addEventListener("click", (e) => {
-          console.log(currentPlayer.name)
-          // checks if the board we are hitting is us or the other player...
-          if(e.target.parentNode.parentNode.id == opponentBoard.id) {
-            let cell = e.target; // get the element clicked
-            console.log("cell.textContent:", cell.textContent); //display the coordinates in the console
-
-            let xCoord = parseInt(cell.textContent.slice(0, 1));
-            let yCoord = parseInt(cell.textContent.slice(2, 3));
-            console.log("x coord: " + xCoord);
-            console.log("y coord: " + yCoord);
-
-
-            if (arrayOpponents[i].gameBoard[xCoord][yCoord] === 1) { //check is there a ship on those coord; if hit:
-              arrayOpponents[i].shipCount--; //reduce number of ships
-              cell.style.background = "purple";
-              // switchPlayers();
-            } else {
-              message = `Miss, better luck next time!`
-              cell.style.background = "lightgreen";
-              // switchPlayers();
+//***** */
+//// Function which crete board on a page
+//***** */
+function boardCreation(player, board) {
+  for (var x = 0; x < 4; x++) {
+    const li = document.createElement("li"); // creating childs for the list (board), in this case represent a row number 'x' of the board
+    for (var y = 0; y < 4; y++) {
+      const cell = document.createElement("div");
+      cell.className = "square"; // adding css properties to make it looks like a square
+      // cell.textContent = `${x},${y} `; // saves the coordinates as a string value 'x,y'
+      cell.value = player.gameBoard[x][y]; //state of the cell
+      //this function adds the click event to each cell
+      cell.addEventListener("click", (e) => {
+        let cell = e.target; // get the element clicked
+        let oppenentBoard = cell.parentNode.parentNode.className; // get class name of clicked element
+        //console.log( cell.value) //display the coordinates in the console
+        if (activeBoard === oppenentBoard) {
+          console.log(cell.value)
+          if (cell.value === 1) {       //if hit:
+            cell.style.background = "rgb(183, 50, 57)"; //with this propertie you can change the background color of the clicked cell. try comment the line bellow and uncomment this line. Do not forget to save this file and refresh the borwser to see the changes
+            cell.value = "";
+            player.shipCount--;
+            shipsPlayer_1.textContent = player_1.shipCount; //update lives on display
+            shipsPlayer_2.textContent = player_2.shipCount;
+            if (player.shipCount === 0) {         //check how many ships are left, if zero:
+              if (player === player_1) {      //declare a winner
+                finalMessage(player_2);
+              } else {
+                finalMessage(player_1);
+              }
             }
-
-            switchPlayers()
+            switchPlayers();
+          } else if (cell.value === 0) {
+            cell.style.visibility = "hidden"; // this  means that the contents of the element will be invisible, but the element stays in its original position and size / try it clicking on any of the black cells (in your browser) and see whats happens
+            switchPlayers();
           }
 
-          // cell.style.visibility = 'hidden';// this  means that the contents of the element will be invisible, but the element stays in its original position and size / try it clicking on any of the black cells (in your browser) and see whats happens
-          // cell.style.background = "purple"; //with this propertie you can change the background color of the clicked cell. try comment the line bellow and uncomment this line. Do not forget to save this file and refresh the borwser to see the changes
-        });
-
-        li.appendChild(cell); //adding each cell into the row number x
-      }
-      arrayPlayerBoards[i].appendChild(li)
-      // board_Player1.appendChild(li); //adding each row into the board
-
+        }
+      });
+      li.appendChild(cell); //adding each cell into the row number x
     }
-
+    board.appendChild(li); //adding each row into the board
   }
+}
 
-};
+//   Function add buttons on a page
 
+function addButtons() {
+  let resetButton = document.createElement("BUTTON"); // create new buttons
+  let newGameButton = document.createElement("BUTTON");
+  resetButton.innerHTML = "reset";
+  resetButton.style.marginRight = "5px";
+  newGameButton.textContent = "New Game";
+  button.appendChild(resetButton);
+  button.appendChild(newGameButton);
+  resetButton.addEventListener("click", resetGame);
+  newGameButton.addEventListener("click", newGame);
+}
 
-// while (currentPlayer.shipCount > 0) { //game will run while there are ships left on battlefield of the currentPlayer
-
-//   if (otherPlayer.gameBoard[xCoord][yCoord] === 1) { //check is there a ship on those coord; if hit:
-//     otherPlayer.shipCount--; //reduce number of ships
-//     otherPlayer.gameBoard[xCoord][yCoord] = 0; //null that field
-//     cell.style.background = "purple";
-//     if (otherPlayer.shipCount > 0) { //check how many ships are left; if there is more than 0: alert(You Hit it...) and switch players
-//       message = `${currentPlayer.name}, You Hit it! ${otherPlayer.name} got ${otherPlayer.shipCount} ships left!`
-//     } else { //if none have left, break the loop and congrats to current player!!!
-//       message = `${currentPlayer.name}, You Did it! You sunk all ${otherPlayer.name}'s ships!!!`;
-//       break;
-//     }
-//     switchPlayers(); //switch player after try
-//   } else {
-//     message = `Miss, better luck next time!`
-//     cell.style.background = "lightgreen";
-//     switchPlayers();
-//   }
-// }
-
-createBatlleField();
-
-
-// const battleship = () => {
-
-//   let currentPlayer, otherPlayer;
-
-//   let shipNumber = 4;           //declare number of battlesip on field, so later if there is need to change that number just do it on this line
-
-//   const player_1 = {
-//     name: prompt(`Enter player 1 name:`),         //create players
-//     shipCount: 0,
-//     gameBoard: [[0, 0, 0, 0],
-//                 [0, 0, 0, 0],
-//                 [0, 0, 0, 0],
-//                 [0, 0, 0, 0]]
-//   };
-
-//   const player_2 = {
-//     name: prompt(`Enter player 2 name:`),
-//     shipCount: 0,
-//     gameBoard: [[0, 0, 0, 0],
-//                 [0, 0, 0, 0],
-//                 [0, 0, 0, 0],
-//                 [0, 0, 0, 0]]
-//   };
-
-//   generateBattlefield = (player) => {
-//     while (player.shipCount < shipNumber) {     //shipCount will start from 0 and will increase until reach shipNumber value
-//       let x = Math.floor(Math.random() * 4);
-//       let y = Math.floor(Math.random() * 4);
-
-//       while (player.gameBoard[x][y] === 1) {    //preventing two or more ships on same coordinates;
-//         x = Math.floor(Math.random() * 4);      //while there is a ship on those coordinates, generate new coordinates
-//         y = Math.floor(Math.random() * 4);
-//       }
-//       player.gameBoard[x][y] = 1;               //place ship on specific coord.
-//       player.shipCount++;                       //shipCount increased by 1
-
-//     }
-//   }
-
-//   generateBattlefield(player_1);            //generate fields for players
-//   generateBattlefield(player_2);
-
-//   coinFlip = () => {                        //decide who is going to play first
-//     if(Math.random() < 0.50) {
-//       currentPlayer = player_1;
-//       otherPlayer = player_2;
-//   }
-//     else {
-//       currentPlayer = player_2;
-//       otherPlayer = player_1;
-//     }
-//   }
-
-//   coinFlip();
-
-//   switchPlayers = () => {                   //switch players
-//     if (currentPlayer === player_1) {
-//       currentPlayer = player_2;
-//       otherPlayer = player_1;
-//     } else {
-//       currentPlayer = player_1;
-//       otherPlayer = player_2
-//     }
-//   }
-
-//   while (currentPlayer.shipCount > 0) {           //game will run while there are ships left on battlefield of the currentPlayer
-//     let xCoord = parseInt(prompt(`${currentPlayer.name}, please enter X Coordinate:`));     //pick coord.
-//     let yCoord = parseInt(prompt(`${currentPlayer.name}, please enter Y Coordinate:`));
-//     if (!isNaN(xCoord) && !isNaN(yCoord) && xCoord < 4 && yCoord < 4 && xCoord > -1 && yCoord >-1) {
-//       //coordinates must be numbers and must be between 0 and 3
-//       if (otherPlayer.gameBoard[xCoord][yCoord] === 1) {        //check is there a ship on those coord; if hit:
-//         otherPlayer.shipCount--;                                //reduce number of ships
-//         otherPlayer.gameBoard[xCoord][yCoord] = 0;              //null that field
-//         if (otherPlayer.shipCount > 0) {                        //check how many ships are left; if there is more than 0: alert(You Hit it...) and switch players
-//           alert(`${currentPlayer.name}, You Hit it! ${otherPlayer.name} got ${otherPlayer.shipCount} ships left!`)
-//         }
-//         else {          //if none have left, break the loop and congrats to current player!!!
-//           alert(`${currentPlayer.name}, You Did it! You sunk all ${otherPlayer.name}'s ships!!!`)
-//           break;
-//         }
-//         switchPlayers();        //switch player after try
-//       } else {
-//         alert(`Miss, better luck next time!`)
-//         switchPlayers();
-//       }
-//     }
-//     else {
-//       alert(`Input value must be number and must be between 0 and 3! Please try again!`)
-//       //input field condition....
-//     }
-
-//   }
-
-//   return `The Winner is ${currentPlayer.name}! CONGRATS!!!!?`
-// }
+function resetGame() {
+  console.log("reset game");
+  player_1.shipCount = 0;
+  player_2.shipCount = 0;
+  generateBattlefield(player_1); //reset boats position
+  generateBattlefield(player_2);
+  boardPlayer_1.innerHTML = ""; //clear game fields
+  boardPlayer_2.innerHTML = "";
+  boardCreation(player_1, boardPlayer_1); //set up new game fields
+  boardCreation(player_2, boardPlayer_2);
+  shipsPlayer_1.textContent = player_1.shipCount; // add lives amount on a page
+  shipsPlayer_2.textContent = player_2.shipCount;
+  turnPlayer.textContent; //set up curent player
+  activeBoard; // Represent which player making fire
+  coinFlip();
+}
+/*Function which create new game*/
+function newGame() {
+  console.log("new game");
+  location.reload(); // refresh page
+}
+generateBattlefield(player_1); //reset boats position
+generateBattlefield(player_2);
+boardCreation(player_1, boardPlayer_1); // create players field
+boardCreation(player_2, boardPlayer_2);
+shipsPlayer_1.textContent = player_1.shipCount; // add lives amount on a page
+shipsPlayer_2.textContent = player_2.shipCount;
+addButtons(); // create reset and new game buttons

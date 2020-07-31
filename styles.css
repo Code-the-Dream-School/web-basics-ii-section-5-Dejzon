@@ -7,6 +7,7 @@ body {
   min-height: 100vh;
   width: 100%;
   background: white;
+  font-family: 'Inconsolata', monospace;
 }
 
 h1{
@@ -36,6 +37,13 @@ button:hover{
   background-color: black;
   color: white;
   border: solid;
+  cursor: pointer;
+}
+
+.controlTab {
+ /* display: flex;
+ margin: 50%;
+ float: left; */
 }
 
 .square{
@@ -44,11 +52,17 @@ button:hover{
   background-color: black;
   width: 60px;
   height: 60px;
+  border-radius: 3px;
+  cursor: pointer;
 }
+/* .square:hover {
+  box-shadow: inset -1px -1px 1px 0 rgba(255, 255, 255, 0.842), inset 1px 1px 1px 0 rgba(255, 255, 255, 0.842)
+} */
 
 .game{
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-around;
 }
 

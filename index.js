@@ -11,13 +11,13 @@
 //one more Thing create a 'reset' and a 'new game' buttons as childs of the element with the id 'buttons'. the reset button has to start the game again and the new game create a new game with new players and a new random board.
 
 const player_1 = {
-  name:'Mido', //prompt(`Enter player 1 name:`), create players
+  name: prompt(`Enter player 1 name:`), //create players
   shipCount: 0,
   gameBoard: []
 };
 
 const player_2 = {
-  name:'Skela',//prompt(`Enter player 2 name:`),
+  name: prompt(`Enter player 2 name:`),
   shipCount: 0,
   gameBoard: []
 };
@@ -108,7 +108,6 @@ function boardCreation(player, board) {
         let oppenentBoard = cell.parentNode.parentNode.className; // get class name of clicked element
         //console.log( cell.value) //display the coordinates in the console
         if (activeBoard === oppenentBoard) {
-          console.log(cell.value)
           if (cell.value === 1) {       //if hit:
             cell.style.background = "rgb(183, 50, 57)"; //with this propertie you can change the background color of the clicked cell. try comment the line bellow and uncomment this line. Do not forget to save this file and refresh the borwser to see the changes
             cell.value = "";
